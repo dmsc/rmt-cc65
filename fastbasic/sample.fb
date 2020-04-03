@@ -1,0 +1,35 @@
+' RMT player sample, in FastBasic
+
+' Init player, call this before START/STOP
+' -> sets song data and start from line 2 (0 is normal song start)
+X = USR(@RMT_INIT, 2, @RMT_SONG_DATA)
+
+? "Press any key to start..."
+GET X
+
+' Setup SFX channel, note and volume
+POKE @RMT_SFX_CHANNEL, 3   ' channel (0..3 or 0..7 for stereo module)
+POKE @RMT_SFX_NOTE, 10     ' note (0..60)
+POKE @RMT_SFX_VOLUME, $F0  ' volume (0..240)
+
+' Start playing now, using a VBI
+X = USR(@RMT_START)
+
+? "PLAYING"
+? "Press keys 1 to 8 for SFX,"
+? "any other key to stop"
+
+DO
+  GET X
+  X = X - 48
+  if X < 9
+    POKE @RMT_SFX_GO, X ! 128
+  ELSE
+    EXIT
+  ENDIF
+LOOP
+
+' End player
+X = USR(@RMT_STOP)
+
+? "ok!"

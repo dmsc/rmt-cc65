@@ -1,0 +1,7 @@
+*.o
+*.lbl
+*.map
+*.xex
+fastbasic/sample.asm
+mkreloc
+mkreloc.exe
