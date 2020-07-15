@@ -1,5 +1,6 @@
 
 #include <conio.h>
+#include <atari.h>
 
 #include "rmt-c.h"
 
@@ -11,6 +12,7 @@ extern char rmt_song_data[];
 
 int main(void)
 {
+    unsigned char i;
     // Init RMT player
     rmt_init( rmt_song_data, 2);
 
@@ -30,7 +32,15 @@ int main(void)
             rmt_sfx_play(c);
         else
             break;
+        rmt_wait_vbi();
     }
+
+    // Slowly fade the volume down
+    i = 0;
+    do {
+        rmt_global_volume_fade = i;
+        rmt_wait_vbi();
+    } while(++i);
 
     rmt_stop();
 

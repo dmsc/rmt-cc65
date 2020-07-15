@@ -29,6 +29,12 @@ DO
   ENDIF
 LOOP
 
+' Slowly fade out the volume
+FOR I = 0 to 255
+  POKE @RMT_GLOBAL_VOLUME_FADE, I
+  PAUSE 0
+NEXT
+
 ' End player
 X = USR(@RMT_STOP)
 

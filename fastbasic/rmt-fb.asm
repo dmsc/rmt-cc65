@@ -8,6 +8,20 @@
         .include "atari.inc"
         .export RMT_INIT, RMT_START, RMT_STOP
 
+        ; Export volume control depending on features
+    .if FEAT_GLOBALVOLUMEFADE
+        .export RMT_GLOBAL_VOLUME_FADE
+        RMT_GLOBAL_VOLUME_FADE = RMTGLOBALVOLUMEFADE
+    .endif
+
+        ; Export SFX control depending on features
+    .if FEAT_SFX
+        .export RMT_SFX_NOTE
+        .export RMT_SFX_CHANNEL
+        .export RMT_SFX_VOLUME
+        .export RMT_SFX_GO
+    .endif
+
         .segment "BYTECODE"
 
 RMT_INIT:
@@ -27,25 +41,33 @@ RMT_START:
         sta     old_vbi+1
         ldy     #<vbi
         ldx     #>vbi
+set_vbi:
         lda     #7
         jmp     SETVBV  ;Start VBI routine
+
 xit:    rts
 
 RMT_STOP:
         ldy     old_vbi
         ldx     old_vbi+1
-        lda     #7
-        jmp     SETVBV  ;Stop VBI routine
+        jsr     set_vbi
         lda     #0
         sta     old_vbi+1
         jmp     rmt_silence
 
 vbi:
+        ldx $D014
+        dex
+        beq do_play  ; On PAL, play in all ticks
+        dec play_time
+        bne do_play  ; On NTSC, skip after 5 ticks
+        lda #6
+        sta play_time
+        bne exit_vbi
+play_time:
+        .byte 6
+do_play:
     .if FEAT_SFX
-        .export RMT_SFX_NOTE
-        .export RMT_SFX_CHANNEL
-        .export RMT_SFX_VOLUME
-        .export RMT_SFX_GO
 RMT_SFX_VOLUME = RMTSFXVOLUME
 RMT_SFX_GO = *+1
         lda #$0
@@ -62,5 +84,6 @@ skip_sfx:
     .endif
         jsr rmt_play
 old_vbi = *+1
+exit_vbi:
         jmp $0000
 
