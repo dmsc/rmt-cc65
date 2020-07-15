@@ -54,18 +54,14 @@ Compile the FastBasic samples
 In the "fastbasic" folder, see the "sample.fb" file for a simple example of
 playing a tune and sound effects.
 
-To compile the sample, first you need to copy the included "fastbasic.cfg" file into the FastBasic compiler folder, overwriting the existing one.
-
-Then, use the following command line:
+To compile, use the following command line:
 
 ```
-fb sample.fb -X:--asm-include-dir -X:.. rmt-fb.asm  ../tune.asm
+fb  sample.fb  -X:--include-dir -X:..  rmt-fb.asm  ../tune.asm
 ```
 
 The files are:
 - sample.fb : The sample program using the RMT interface.
 - rmt-fb.asm : Assembly code for the FastBasic callable functions.
-
-
 
 
