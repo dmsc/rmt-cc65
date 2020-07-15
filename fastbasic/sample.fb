@@ -22,7 +22,7 @@ X = USR(@RMT_START)
 DO
   GET X
   X = X - 48
-  if X < 9
+  if X > 0 AND X < 9
     POKE @RMT_SFX_GO, X ! 128
   ELSE
     EXIT
